@@ -33,9 +33,9 @@ window.onload = function() {
 	var playerDirection;
 
 	var protagonist;
-
 	var cursors;
 
+	var RANGE = 50;
 	function create() {
 		map = game.add.tilemap('diamond');
 
@@ -75,9 +75,15 @@ window.onload = function() {
 
 	function update() {
 		var protagonistRange = getPolarDifference(player,protagonist);
+
 		player.body.velocity.x = 0;
 		player.body.velocity.y = 0;
 		var walkSpeed = 75;
+
+		protagonist.body.velocity.x = 0;
+		protagonist.body.velocity.y = 0;
+		var protagonistMaxSpeed = 100;
+
 		if(cursors.down.isDown){
 			player.body.velocity.y += walkSpeed;
 			playerDirection = 'down';
@@ -114,6 +120,10 @@ window.onload = function() {
 				default:
 					break;
 			}
+		}
+		if(protagonistRange.displacement <= RANGE){
+			protagonist.body.velocity.x += (1-(protagonistRange.displacement/RANGE)) * protagonistMaxSpeed * Math.cos(protagonistRange.angle);
+			protagonist.body.velocity.y += (1-(protagonistRange.displacement/RANGE)) * (-1) * protagonistMaxSpeed * Math.sin(protagonistRange.angle);
 		}
 	}
 
