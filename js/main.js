@@ -20,6 +20,9 @@ window.onload = function() {
 		game.load.image('happylandTiles', 'assets/tilemaps/tilesets/happyland/tileset_8.png');
 		game.load.spritesheet('player', 'assets/sprites/sara/sara\ 16x18\ source.png', 16,18);
 		game.load.spritesheet('protagonist', 'assets/sprites/base\ hero/Hero.png',16,16);
+		game.load.image('base', 'assets/sprites/baseball/base.png');
+		game.load.image('homePlate', 'assets/sprites/baseball/homeplate.png');
+		game.load.spritesheet('baseball', 'assets/sprites/baseball/baseball.png', 7, 7);
 	}
 	var map;
 	var backgroundLayer;
@@ -36,6 +39,15 @@ window.onload = function() {
 	var cursors;
 
 	var RANGE = 50;
+
+	var ballSpawns;
+
+	var baseballs;
+	var baseball;
+
+	var spawnTime = 0;
+
+	var score = 0;
 	function create() {
 		map = game.add.tilemap('diamond');
 
@@ -70,10 +82,23 @@ window.onload = function() {
 		protagonist.body.collideWorldBounds = true;
 
 
+		createBallSpawn();
+
+		baseballs = game.add.group();
+		baseballs.enableBody = true;
+		baseballs.physicsBodyType = Phaser.Physics.ARCADE;
+		baseballs.createMultiple(6, 'baseball');
+		baseballs.setAll('anchor.x', 0.5);
+		baseballs.setAll('anchor.y', 0.5);
+		baseballs.setAll('outOfBoundsKill', true);
+		baseballs.setAll('checkWorldBounds', true);
+
 		cursors = game.input.keyboard.createCursorKeys();
 	}
 
 	function update() {
+		game.physics.arcade.overlap(protagonist, baseballs, killBall, null, this);
+
 		var protagonistRange = getPolarDifference(player,protagonist);
 
 		player.body.velocity.x = 0;
@@ -125,6 +150,11 @@ window.onload = function() {
 			protagonist.body.velocity.x += (1-(protagonistRange.displacement/RANGE)) * protagonistMaxSpeed * Math.cos(protagonistRange.angle);
 			protagonist.body.velocity.y += (1-(protagonistRange.displacement/RANGE)) * (-1) * protagonistMaxSpeed * Math.sin(protagonistRange.angle);
 		}
+		if(game.time.now >= spawnTime){
+			var spawnPoint = Math.floor(Math.random() * (3.99999));
+			spawnBall(ballSpawns.children[spawnPoint]);
+			spawnTime = game.time.now + 2000;
+		}
 	}
 
 	function findObjectsByType(type, map, layer) {
@@ -148,7 +178,9 @@ window.onload = function() {
 	function createBallSpawn(){
 		ballSpawns = game.add.group();
 		ballSpawns.enableBody = true;
-		var ballSpawn;
+		ballSpawns.setAll('anchor.x', 0.5);
+		ballSpawns.setAll('anchor.y', 0.5);
+		var result;
 		result = findObjectsByType('ballSpawn', map, 'Objects');
 		result.forEach(function(element){
 			createFromTiledObject(element, ballSpawns);
@@ -163,5 +195,34 @@ window.onload = function() {
 		ret.displacement = displacement.abs;
 		ret.angle = Math.atan2((displacement.y),(displacement.x));
 		return ret;
+	}
+	function spawnBall(ballSpawn){
+		var ballSpeed = 100;
+		baseball = baseballs.getFirstExists(false);
+		if(baseball){
+			baseball.reset(ballSpawn.x, ballSpawn.y -9);
+			var pitchAngle;
+			if(ballSpawn.name === 'homePlate'){
+				pitchAngle = Math.PI/2;
+			}
+			else if(ballSpawn.name === 'firstBase'){
+				pitchAngle = Math.PI;
+			}
+			else if(ballSpawn.name === 'secondBase'){
+				pitchAngle = -Math.PI/2;
+			}
+			else if(ballSpawn.name === 'thirdBase'){
+				pitchAngle = 0;
+			}
+			pitchAngle += (.2*Math.random())-.1;
+			ballSpeed -= (Math.floor(50*Math.random()));
+			baseball.body.velocity.x = ballSpeed * Math.cos(pitchAngle);
+			baseball.body.velocity.y = - ballSpeed * Math.sin(pitchAngle);
+		}
+		
+	}
+	function killBall(protagonist,baseball){
+		baseball.kill();
+		score += 100;
 	}
 };

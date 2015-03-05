@@ -49,64 +49,76 @@
                  "y":320.5
                 }, 
                 {
-                 "height":21.3333333333333,
-                 "id":6,
-                 "name":"spawn1",
+                 "gid":98,
+                 "height":0,
+                 "id":10,
+                 "name":"homePlate",
                  "properties":
                     {
+                     "name":"homePlate",
+                     "sprite":"homePlate",
                      "type":"ballSpawn"
                     },
                  "rotation":0,
                  "type":"ballSpawn",
                  "visible":true,
-                 "width":19.3333333333334,
-                 "x":454.666666666667,
-                 "y":694
+                 "width":0,
+                 "x":456,
+                 "y":713.333333333333
                 }, 
                 {
-                 "height":21.3333,
-                 "id":7,
-                 "name":"spawn1",
+                 "gid":97,
+                 "height":0,
+                 "id":12,
+                 "name":"firstBase",
                  "properties":
                     {
+                     "name":"firstBase",
+                     "sprite":"base",
                      "type":"ballSpawn"
                     },
                  "rotation":0,
                  "type":"ballSpawn",
                  "visible":true,
-                 "width":19.3333,
-                 "x":132.166683333333,
-                 "y":387.666683333333
+                 "width":0,
+                 "x":785.333333333333,
+                 "y":409.333333333333
                 }, 
                 {
-                 "height":21.3333,
-                 "id":8,
-                 "name":"spawn1",
+                 "gid":97,
+                 "height":0,
+                 "id":13,
+                 "name":"secondBase",
                  "properties":
                     {
+                     "name":"secondBase",
+                     "sprite":"base",
                      "type":"ballSpawn"
                     },
                  "rotation":0,
                  "type":"ballSpawn",
                  "visible":true,
-                 "width":19.3333,
-                 "x":455.000016666667,
-                 "y":71.33335
+                 "width":0,
+                 "x":458.666666666667,
+                 "y":92
                 }, 
                 {
-                 "height":21.3333,
-                 "id":9,
-                 "name":"spawn1",
+                 "gid":97,
+                 "height":0,
+                 "id":14,
+                 "name":"thirdBase",
                  "properties":
                     {
+                     "name":"thirdBase",
+                     "sprite":"base",
                      "type":"ballSpawn"
                     },
                  "rotation":0,
                  "type":"ballSpawn",
                  "visible":true,
-                 "width":19.3333,
-                 "x":773.000016666667,
-                 "y":390.666683333333
+                 "width":0,
+                 "x":133.333333333333,
+                 "y":404
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -115,7 +127,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":10,
+ "nextobjectid":16,
  "orientation":"orthogonal",
  "properties":
     {
@@ -157,6 +169,21 @@
                  "name":"Dirt",
                  "tile":36
                 }],
+         "tileheight":16,
+         "tilewidth":16
+        }, 
+        {
+         "firstgid":97,
+         "image":"..\/..\/..\/..\/sprites\/baseball\/bases.png",
+         "imageheight":16,
+         "imagewidth":32,
+         "margin":0,
+         "name":"baseball",
+         "properties":
+            {
+
+            },
+         "spacing":0,
          "tileheight":16,
          "tilewidth":16
         }],
