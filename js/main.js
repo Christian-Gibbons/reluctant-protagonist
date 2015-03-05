@@ -56,6 +56,7 @@ window.onload = function() {
 	var timeLeft = gameTime;
 
 	var timeText;
+	var scoreText;
 
 	function create() {
 		map = game.add.tilemap('diamond');
@@ -114,101 +115,109 @@ window.onload = function() {
 		cursors = game.input.keyboard.createCursorKeys();
 
 		timeText = game.add.text( game.world.width/2 , 20, "", style );
+		scoreText = game.add.text(game.world.width/2, 60, "", style);
 	}
 
 	function update() {
-		game.physics.arcade.overlap(protagonist, baseballs, killBall, null, this);
+			player.body.velocity.x = 0;
+			player.body.velocity.y = 0;
 
-		var protagonistRange = getPolarDifference(player,protagonist);
+			protagonist.body.velocity.x = 0;
+			protagonist.body.velocity.y = 0;
 
-		player.body.velocity.x = 0;
-		player.body.velocity.y = 0;
-		var walkSpeed = 75;
+		if(timeLeft >0){
+			
+			game.physics.arcade.overlap(protagonist, baseballs, killBall, null, this);
 
-		protagonist.body.velocity.x = 0;
-		protagonist.body.velocity.y = 0;
-		var protagonistMaxSpeed = 100;
+			var protagonistRange = getPolarDifference(player,protagonist);
 
-		if(cursors.down.isDown){
-			player.body.velocity.y += walkSpeed;
-			playerDirection = 'down';
-			player.animations.play('walkDown');
-		}
-		else if(cursors.up.isDown){
-			player.body.velocity.y -= walkSpeed;
-			playerDirection = 'up';
-			player.animations.play('walkUp');
-		}
-		if(cursors.left.isDown){
-			player.body.velocity.x -= walkSpeed;
-			playerDirection = 'left';
-			player.animations.play('walkLeft');
-		}
-		else if(cursors.right.isDown){
-			player.body.velocity.x += walkSpeed;
-			playerDirection = 'right';
-			player.animations.play('walkRight');			
-		}
-		if(!(cursors.down.isDown || cursors.up.isDown || cursors.left.isDown || cursors.right.isDown)){
-			player.animations.stop();
-			player.frame = 1;
-			switch(playerDirection){
-				case 'right':
-					player.frame += 9;
-					break;
-				case 'down':
-					player.frame += 18;
-					break;
-				case 'left':
-					player.frame += 27;
-					break;
-				default:
-					break;
+			var walkSpeed = 75;
+
+			var protagonistMaxSpeed = 100;
+
+			if(cursors.down.isDown){
+				player.body.velocity.y += walkSpeed;
+				playerDirection = 'down';
+				player.animations.play('walkDown');
 			}
-		}
-		if(protagonistRange.displacement <= RANGE){
-			protagonist.body.velocity.x += (1-(protagonistRange.displacement/RANGE)) * protagonistMaxSpeed * Math.cos(protagonistRange.angle);
-			protagonist.body.velocity.y += (1-(protagonistRange.displacement/RANGE)) * (-1) * protagonistMaxSpeed * Math.sin(protagonistRange.angle);
-			if((protagonistRange.angle >= -Math.PI/4) && (protagonistRange.angle < Math.PI/4)){
-				protagonist.animations.play('walkRight');
-				protagonistDirection = 'right';
+			else if(cursors.up.isDown){
+				player.body.velocity.y -= walkSpeed;
+				playerDirection = 'up';
+				player.animations.play('walkUp');
 			}
-			else if((protagonistRange.angle >= Math.PI/4) && (protagonistRange.angle < (3*Math.PI/4))){
-				protagonist.animations.play('walkUp');
-				protagonistDirection = 'up';
+			if(cursors.left.isDown){
+				player.body.velocity.x -= walkSpeed;
+				playerDirection = 'left';
+				player.animations.play('walkLeft');
 			}
-			else if((protagonistRange.angle >= (-3*Math.PI/4)) && (protagonistRange.angle < -Math.PI/4)){
-				protagonist.animations.play('walkDown');
-				protagonistDirection = 'down';
+			else if(cursors.right.isDown){
+				player.body.velocity.x += walkSpeed;
+				playerDirection = 'right';
+				player.animations.play('walkRight');			
+			}
+			if(!(cursors.down.isDown || cursors.up.isDown || cursors.left.isDown || cursors.right.isDown)){
+				player.animations.stop();
+				player.frame = 1;
+				switch(playerDirection){
+					case 'right':
+						player.frame += 9;
+						break;
+					case 'down':
+						player.frame += 18;
+						break;
+					case 'left':
+						player.frame += 27;
+						break;
+					default:
+						break;
+				}
+			}
+			if(protagonistRange.displacement <= RANGE){
+				protagonist.body.velocity.x += (1-(protagonistRange.displacement/RANGE)) * protagonistMaxSpeed * Math.cos(protagonistRange.angle);
+				protagonist.body.velocity.y += (1-(protagonistRange.displacement/RANGE)) * (-1) * protagonistMaxSpeed * Math.sin(protagonistRange.angle);
+				if((protagonistRange.angle >= -Math.PI/4) && (protagonistRange.angle < Math.PI/4)){
+					protagonist.animations.play('walkRight');
+					protagonistDirection = 'right';
+				}
+				else if((protagonistRange.angle >= Math.PI/4) && (protagonistRange.angle < (3*Math.PI/4))){
+					protagonist.animations.play('walkUp');
+					protagonistDirection = 'up';
+				}
+				else if((protagonistRange.angle >= (-3*Math.PI/4)) && (protagonistRange.angle < -Math.PI/4)){
+					protagonist.animations.play('walkDown');
+					protagonistDirection = 'down';
+				}
+				else{
+					protagonist.animations.play('walkLeft');
+					protagonistDirection = 'left';
+				}
 			}
 			else{
-				protagonist.animations.play('walkLeft');
-				protagonistDirection = 'left';
+				protagonist.animations.stop();
+				if(protagonistDirection === 'right'){
+					protagonist.frame = 13;
+				}
+				else if(protagonistDirection === 'up'){
+					protagonist.frame = 0;
+				}
+				else if(protagonistDirection === 'down'){
+					protagonist.frame = 4;
+				}
+				else if(protagonistDirection === 'left'){
+					protagonist.frame = 8;
+				}
 			}
+			if(game.time.now >= spawnTime){
+				var spawnPoint = Math.floor(Math.random() * (3.99999));
+				spawnBall(ballSpawns.children[spawnPoint]);
+				spawnTime = game.time.now + 2000;
+			}
+			timeLeft = gameTime - (game.time.now/1000);
+			timeText.text = 'time remaining: ' + timeLeft;
+			scoreText.text = 'Score: ' + score;
 		}
 		else{
-			protagonist.animations.stop();
-			if(protagonistDirection === 'right'){
-				protagonist.frame = 13;
-			}
-			else if(protagonistDirection === 'up'){
-				protagonist.frame = 0;
-			}
-			else if(protagonistDirection === 'down'){
-				protagonist.frame = 4;
-			}
-			else if(protagonistDirection === 'left'){
-				protagonist.frame = 8;
-			}
-		}
-		if(game.time.now >= spawnTime){
-			var spawnPoint = Math.floor(Math.random() * (3.99999));
-			spawnBall(ballSpawns.children[spawnPoint]);
-			spawnTime = game.time.now + 2000;
-		}
-		timeLeft = gameTime - (game.time.now/1000);
-		timeText.text = 'time remaining: ' + timeLeft;
-
+			timeText.text = 'Game Over';
 	}
 
 	function findObjectsByType(type, map, layer) {
