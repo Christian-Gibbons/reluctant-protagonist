@@ -218,6 +218,7 @@ window.onload = function() {
 		}
 		else{
 			timeText.text = 'Game Over';
+		}
 	}
 
 	function findObjectsByType(type, map, layer) {
